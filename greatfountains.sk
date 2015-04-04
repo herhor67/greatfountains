@@ -1,0 +1,151 @@
+#=============================================#
+#   Skrypt napisany przez herhor67            #
+#   Nazwa: GreatFountain                      #
+#=============================================#
+#  Licencja skryptu:                          #
+# * Nie zezwalam na:                          #
+# - Usuwanie tresci o autorze!                #
+# - Podszywanie sie pod autora!               #
+# - Uzywanie kodu skryptu w swoich skryptach! #
+# - Zarabianie na skrypcie!                   #
+# * Zezwalam na:                              #
+# + Dodawanie kodu na swoja potrzebe!         #
+# + Modyfikowanie wiadomosci!                 #
+#=============================================#
+variables:
+	{fontanny.wlaczone} = true
+
+#---------------------------------------#
+#       Spawnowanie wody na dole        #
+#---------------------------------------#
+command /fontannadolna:
+	trigger:
+		loop {dolne.fontanna::*}:
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 1.1
+#---------------------------------------#
+#       Spawnowanie wody na gorze       #
+#---------------------------------------#
+command /fontannagorna:
+	trigger:
+		loop {gorne.fontanna::*}:
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity north at speed 0.25
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity north at speed 0.22
+			push last spawned entity east at speed 0.22
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity east at speed 0.25
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity east at speed 0.22
+			push last spawned entity south at speed 0.22
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity south at speed 0.25
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity south at speed 0.22
+			push last spawned entity west at speed 0.22
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity west at speed 0.25
+			spawn falling water at loop-value
+			push last spawned entity upwards at speed 0.5
+			push last spawned entity north at speed 0.22
+			push last spawned entity west at speed 0.22
+#---------------------------------------#
+#         Automatyka fontanny           #
+#---------------------------------------#
+every 0.2 second:
+	{fontanny.wlaczone} is true:
+		execute server command "/fontannadolna"
+every 0.3 second:
+	{fontanny.wlaczone} is true:
+		execute server command "/fontannagorna"
+
+
+command /fontanna [<text>] [<text>]:
+	permission: fontanna.admin
+	permission message: Nie mozesz tego zrobic!
+	trigger:
+#---------------------------------------#
+#           Dodawanie fontanny          #
+#---------------------------------------#
+		arg 1 is "daj":
+			arg 2 is "dolny":
+				give player 1 sponge named "&2Dodaj dolny"
+				send "&2Dostales gabke do dodania dolnego spawnu fontanny"
+			else if arg 2 is "gorny":
+				give player 1 sponge named "&2Dodaj gorny"
+				send "&2Dostales gabke do dodania gornego spawnu fontanny"
+			else:
+				send "Musisz wpisac dolny lub gorny!"
+#---------------------------------------#
+#            Usuwanie fontanny          #
+#---------------------------------------#
+		arg 1 is "usun":
+			arg 2 is "dolny":
+				give player 1 sponge named "&2Usun dolny"
+				send "&2Dostales gabke do usuniecia dolnego spawnu fontanny"
+			else if arg 2 is "gorny":
+				give player 1 sponge named "&2Usun gorny"
+				send "&2Dostales gabke do usuniecia gornego spawnu fontanny"
+			else:
+				send "Musisz wpisac dolny lub gorny!"
+#---------------------------------------#
+#    wylaczanie i wlaczanie fontanny    #
+#---------------------------------------#
+		arg 1 is "przelacz":
+			{fontanny.wlaczone} is true:
+				set {fontanny.wlaczone} to false
+				send "&2Wylaczyles fontanny"
+			else:
+				set {fontanny.wlaczone} to true
+				send "&2Wlaczyles fontanny"
+		arg 1 is "czysc":
+			arg 2 is "wszystko":
+				clear {dolne.fontanna::*}
+				clear {gorne.fontanna::*}
+				send "&2Usunales wszystkie fontanny"
+		arg 1 is "autor":
+			send "&6-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-"
+			send "&6Autorem skrryptu jest &cherhor67"
+			send "&cskrypty.herhor67.tk&6, &cskript.pl"
+			send "&6-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-"
+		arg 1 is not set:
+			send "&6-=-=-=-=-={ &2GREAT &CFOUNTAIN &6}=-=-=-=-=-"
+			send "&c/fontanna daj dolny &6- daje blok do dodania dolnego spawnu fontanny"
+			send "&c/fontanna usun dolny &6- daje blok do usuniecia dolnego spawnu fontanny"
+			send "&c/fontanna daj gorny &6- daje blok do dodania gornego spawnu fontanny"
+			send "&c/fontanna usun gorny &6- daje blok do usuniecia gornego spawnu fontanny"
+			send "&c/fontanna przelacz &6- wlacza lub wylacza fontanny"
+			send "&c/fontanna czysc wszystko &6- usuwa wszystkie fontanny"
+			send "&c/fontanna odswiez &6- odswieza skrypt"
+			send "&6-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-"
+		arg 1 is "pomoc" or "help":
+			execute player command "/fontanna"
+		arg 1 is "odswiez":
+			execute player command "/sk reload %script%"
+			
+
+on  place of sponge:
+	name of player's tool is "&2Dodaj dolny":
+		add location of block to {dolne.fontanna::*}
+		send "&2Dodales dolny spawn fontanny"
+		cancel event
+	else if name of player's tool is "&2Dodaj gorny":
+		add location of block to {gorne.fontanna::*}
+		send "&2Dodales gorny spawn fontanny"
+		cancel event
+	name of player's tool is "&2Usun dolny":
+		remove location of block from {dolne.fontanna::*}
+		send "&2Usunales dolny spawn fontanny"
+		cancel event
+	name of player's tool is "&2Usun gorny":
+		remove location of block from {gorne.fontanna::*}
+		send "&2Usunales gorny spawn fontanny"
+		cancel event
